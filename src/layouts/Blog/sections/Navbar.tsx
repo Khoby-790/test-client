@@ -1,13 +1,25 @@
 import { Fragment, useState } from "react";
 import { Popover, Transition } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Modal } from "@mantine/core";
+import {
+  ArrowDownOnSquareStackIcon,
+  DocumentIcon,
+  Bars3Icon,
+  CogIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+import { Avatar, Menu, Modal } from "@mantine/core";
 import SignInForm from "../components/SignInForm";
 import SignUpForm from "../components/SignUpForm";
+import Show from "../../../components/Show";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import _ from "lodash";
+import { logout } from "../../../features/userSlice";
 
 export default function Navbar() {
+  const dispatch = useAppDispatch();
   const [showSignIn, setShowSignIn] = useState<boolean>(false);
   const [showSignUp, setShowSignUp] = useState<boolean>(false);
+  const { user } = useAppSelector((state) => state.user);
   return (
     <Fragment>
       <Popover className="relative bg-white">
@@ -29,21 +41,44 @@ export default function Navbar() {
                 <Bars3Icon className="h-6 w-6" aria-hidden="true" />
               </Popover.Button>
             </div>
-
-            <div className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
-              <button
-                onClick={() => setShowSignIn(true)}
-                className="whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900"
-              >
-                Sign in
-              </button>
-              <button
-                onClick={() => setShowSignUp(true)}
-                className="ml-8 inline-flex items-center justify-center whitespace-nowrap rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
-              >
-                Sign up
-              </button>
-            </div>
+            <Show if={_.isNull(user)}>
+              <div className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
+                <button
+                  onClick={() => setShowSignIn(true)}
+                  className="whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900"
+                >
+                  Sign in
+                </button>
+                <button
+                  onClick={() => setShowSignUp(true)}
+                  className="ml-8 inline-flex items-center justify-center whitespace-nowrap rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                >
+                  Sign up
+                </button>
+              </div>
+            </Show>
+            <Show if={!_.isNull(user)}>
+              <Menu shadow="md" width={200}>
+                <Menu.Target>
+                  <Avatar size={40} color="blue">
+                    BH
+                  </Avatar>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  <Menu.Label>Application</Menu.Label>
+                  <Menu.Item icon={<DocumentIcon className="h-6 w-6" />}>
+                    Account
+                  </Menu.Item>
+                  <Menu.Item
+                    onClick={() => dispatch(logout())}
+                    color="red"
+                    icon={<ArrowDownOnSquareStackIcon className="h-6 w-6" />}
+                  >
+                    Sign oout
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+            </Show>
           </div>
         </div>
 
@@ -94,23 +129,25 @@ export default function Navbar() {
                     Docs
                   </a>
                 </div>
-                <div>
-                  <a
-                    href="#"
-                    className="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
-                  >
-                    Sign up
-                  </a>
-                  <p className="mt-6 text-center text-base font-medium text-gray-500">
-                    Existing customer?{" "}
+                <Show if={_.isNull(user)}>
+                  <div>
                     <a
                       href="#"
-                      className="text-indigo-600 hover:text-indigo-500"
+                      className="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                     >
-                      Sign in
+                      Sign up
                     </a>
-                  </p>
-                </div>
+                    <p className="mt-6 text-center text-base font-medium text-gray-500">
+                      Existing customer?{" "}
+                      <a
+                        href="#"
+                        className="text-indigo-600 hover:text-indigo-500"
+                      >
+                        Sign in
+                      </a>
+                    </p>
+                  </div>
+                </Show>
               </div>
             </div>
           </Popover.Panel>
@@ -123,7 +160,7 @@ export default function Navbar() {
         title="Welcome!"
         size={600}
       >
-        <SignInForm />
+        <SignInForm setClose={setShowSignIn} />
       </Modal>
 
       <Modal
@@ -132,7 +169,7 @@ export default function Navbar() {
         title="Introduce yourself!"
         size={600}
       >
-        <SignUpForm />
+        <SignUpForm setClose={setShowSignUp} />
       </Modal>
     </Fragment>
   );

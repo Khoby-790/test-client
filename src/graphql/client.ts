@@ -4,8 +4,8 @@ import { store } from "../app/store";
 
 const URL =
   process.env.NODE_ENV === "development"
-    ? "http://localhost:8001/graphql"
-    : "http://localhost:8001/graphql";
+    ? "http://localhost:4000/graphql"
+    : "http://localhost:4000/graphql";
 
 export const TOKEN_str = "duke-token-web";
 

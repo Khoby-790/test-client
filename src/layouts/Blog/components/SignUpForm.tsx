@@ -5,27 +5,47 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { Input, PasswordInput, Footer, Button } from "@mantine/core";
-import React from "react";
+import React, { SetStateAction } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useAppDispatch } from "../../../app/hooks";
 import ErrorMessage from "../../../components/ErrorMessage";
 import { signUp } from "../../../graphql/mutations/auth";
+import { UserSignIn_userSignIn } from "../../../graphql/mutations/__generated__/UserSignIn";
 import {
   UserSignUp,
   UserSignUpVariables,
 } from "../../../graphql/mutations/__generated__/UserSignUp";
+import { authenticate } from "../../../features/userSlice";
+import { showNotification } from "@mantine/notifications";
 
-type Props = {};
+type Props = {
+  setClose: React.Dispatch<SetStateAction<boolean>>;
+};
 
-const SignUpForm = (props: Props) => {
+const SignUpForm = ({ setClose }: Props) => {
+  const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<UserSignUpVariables>();
-  const [] = useMutation<UserSignUp, UserSignUpVariables>(signUp);
+  const [execute, { loading }] = useMutation<UserSignUp, UserSignUpVariables>(
+    signUp
+  );
 
-  const onSubmit: SubmitHandler<UserSignUpVariables> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<UserSignUpVariables> = (variables) => {
+    execute({ variables })
+      .then(({ data }) => {
+        dispatch(authenticate(data?.userSignUp as UserSignIn_userSignIn));
+        setClose(false);
+      })
+      .catch((err) => {
+        showNotification({
+          message: err?.message,
+          title: "Error",
+          color: "red",
+        });
+      });
   };
 
   return (
@@ -71,6 +91,8 @@ const SignUpForm = (props: Props) => {
       </div>
       <Footer className="py-3 flex justify-end" height={""}>
         <Button
+          loading={loading}
+          disabled={loading}
           type="submit"
           size="lg"
           variant="filled"

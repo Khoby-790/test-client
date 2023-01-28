@@ -1,11 +1,13 @@
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { Button, Footer, Input, PasswordInput } from "@mantine/core";
 import { IconAt } from "@tabler/icons";
-import React from "react";
+import React, { SetStateAction } from "react";
 
-type Props = {};
+type Props = {
+  setClose: React.Dispatch<SetStateAction<boolean>>;
+};
 
-const SignInForm = (props: Props) => {
+const SignInForm = ({ setClose }: Props) => {
   return (
     <div className="space-y-5">
       <Input

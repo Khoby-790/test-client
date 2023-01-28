@@ -18,5 +18,6 @@ export const getBlogs = gql`
         last_name
       }
     }
+    getBlogsLength(filter: $filter)
   }
 `;

@@ -32,6 +32,7 @@ export interface GetBlogs_getBlogs {
 
 export interface GetBlogs {
   getBlogs: GetBlogs_getBlogs[] | null;
+  getBlogsLength: number;
 }
 
 export interface GetBlogsVariables {

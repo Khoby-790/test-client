@@ -27,3 +27,20 @@ export const signUp = gql`
     }
   }
 `;
+
+export const createBlog = gql`
+  mutation CreateBlog($input: BlogInput) {
+    createBlog(input: $input)
+  }
+`;
+
+export const deleteBlog = gql`
+  mutation RemoveBlog($removeBlogId: ID!) {
+    removeBlog(id: $removeBlogId)
+  }
+`;
+export const updateBlog = gql`
+  mutation UpdateBlog($input: BlogInput) {
+    updateBlog(input: $input)
+  }
+`;

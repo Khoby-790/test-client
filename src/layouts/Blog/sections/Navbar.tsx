@@ -6,14 +6,24 @@ import {
   Bars3Icon,
   CogIcon,
   XMarkIcon,
+  CursorArrowRaysIcon,
 } from "@heroicons/react/24/outline";
-import { Avatar, Menu, Modal } from "@mantine/core";
+import {
+  Avatar,
+  Menu,
+  Modal,
+  UnstyledButton,
+  Text,
+  Group,
+} from "@mantine/core";
 import SignInForm from "../components/SignInForm";
 import SignUpForm from "../components/SignUpForm";
 import Show from "../../../components/Show";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import _ from "lodash";
 import { logout } from "../../../features/userSlice";
+import { IconChevronRight } from "@tabler/icons";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const dispatch = useAppDispatch();
@@ -58,16 +68,27 @@ export default function Navbar() {
               </div>
             </Show>
             <Show if={!_.isNull(user)}>
-              <Menu shadow="md" width={200}>
+              <Menu shadow="sm">
                 <Menu.Target>
-                  <Avatar size={40} color="blue">
-                    BH
-                  </Avatar>
+                  <UnstyledButton>
+                    <Group>
+                      <Avatar radius="xl">BH</Avatar>.
+                      <div style={{ flex: 1 }}>
+                        <Text size="sm" weight={500}>
+                          {user?.first_name} {user?.last_name}
+                        </Text>
+
+                        <Text color="dimmed" size="xs">
+                          {user?.email}
+                        </Text>
+                      </div>
+                    </Group>
+                  </UnstyledButton>
                 </Menu.Target>
                 <Menu.Dropdown>
-                  <Menu.Label>Application</Menu.Label>
+                  <Menu.Label>menu</Menu.Label>
                   <Menu.Item icon={<DocumentIcon className="h-6 w-6" />}>
-                    Account
+                    <Link to="/create-post">Create new post</Link>
                   </Menu.Item>
                   <Menu.Item
                     onClick={() => dispatch(logout())}
@@ -112,42 +133,6 @@ export default function Navbar() {
                     </Popover.Button>
                   </div>
                 </div>
-              </div>
-              <div className="space-y-6 py-6 px-5">
-                <div className="grid grid-cols-2 gap-y-4 gap-x-8">
-                  <a
-                    href="#"
-                    className="text-base font-medium text-gray-900 hover:text-gray-700"
-                  >
-                    Pricing
-                  </a>
-
-                  <a
-                    href="#"
-                    className="text-base font-medium text-gray-900 hover:text-gray-700"
-                  >
-                    Docs
-                  </a>
-                </div>
-                <Show if={_.isNull(user)}>
-                  <div>
-                    <a
-                      href="#"
-                      className="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
-                    >
-                      Sign up
-                    </a>
-                    <p className="mt-6 text-center text-base font-medium text-gray-500">
-                      Existing customer?{" "}
-                      <a
-                        href="#"
-                        className="text-indigo-600 hover:text-indigo-500"
-                      >
-                        Sign in
-                      </a>
-                    </p>
-                  </div>
-                </Show>
               </div>
             </div>
           </Popover.Panel>
